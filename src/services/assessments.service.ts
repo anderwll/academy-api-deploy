@@ -157,9 +157,12 @@ export class AssessmentService {
 
   private mapToDto(assessment: Assessment) {
     return {
+      id: assessment.id,
       title: assessment.title,
       description: assessment.description,
       grade: assessment.grade,
+      createdAt: assessment.createdAt,
+      studentId: assessment.studentId,
     };
   }
 }

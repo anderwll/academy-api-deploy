@@ -51,7 +51,10 @@ export class AuthService {
       ok: true,
       code: 200,
       message: "Login efetuado com sucesso!",
-      data: { token },
+      data: {
+        token,
+        student: { id: student.id, name: student.name, email: student.email },
+      },
     };
   }
 

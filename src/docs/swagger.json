@@ -1,0 +1,253 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Academy API",
+    "description": "Recursos para o controle e gerenciamentos academico de alunos da [Growdev](https://growdev.com.br).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "API localhost"
+    },
+    {
+      "url": "https://exemplo.growdev.com",
+      "description": "API Produção"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação",
+      "description": "Todas as funcionalidades para autenticação de alunos"
+    },
+    {
+      "name": "Avaliações",
+      "description": "Todas as funcionalidades para avaliações"
+    }
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Autenticação de alunos",
+        "requestBody": {
+          "description": "Objeto com email e senha do aluno",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "joao@email.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "senha123"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Json com os dados do aluno encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": {
+                          "type": "string",
+                          "example": "3d0ca315-aff9-4fc2-be61-3b76b9a2d798"
+                        },
+                        "student": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "example": "3d0ca315-aff9-4fc2-be61-3b76b9a2d798"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "João"
+                            },
+                            "email": {
+                              "type": "string",
+                              "format": "email",
+                              "example": "joao@email.com"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessments": {
+      "get": {
+        "tags": ["Avaliações"],
+        "summary": "Retorna a lista de avaliações de um determinado aluno",
+        "description": "Enpoint que retorna a lista de avaliações de um determinado aluno",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Determina a quantidade de registro retornados"
+          },
+          {
+            "in": "query",
+            "name": "take",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "Determina a quantidade de registro retornados"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Json com a lista de avaliações",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Assessment"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Assessment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3d0ca315-aff9-4fc2-be61-3b76b9a2d798"
+          },
+          "title": {
+            "type": "string",
+            "example": "Prova de Matemática"
+          },
+          "description": {
+            "type": "string",
+            "example": "Prova de matemática com 10 questões"
+          },
+          "grade": {
+            "type": "number",
+            "example": 10
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-09-01T00:00:00Z"
+          },
+          "studentId": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3d0ca315-aff9-4fc2-be61-3b76b9a2d798"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "any",
+            "example": {}
+          }
+        }
+      },
+      "BadRequestResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "UUID"
+      }
+    }
+  }
+}
