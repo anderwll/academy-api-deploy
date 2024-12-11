@@ -8,10 +8,10 @@
   "servers": [
     {
       "url": "http://localhost:8080",
-      "description": "API localhost"
+      "description": "API Localhost"
     },
     {
-      "url": "https://exemplo.growdev.com",
+      "url": "https://academy-api-z60x.onrender.com",
       "description": "API Produção"
     }
   ],
