@@ -52,12 +52,6 @@ export class AssessmentService {
     id: string,
     query?: { page?: number; take?: number }
   ): Promise<ResponseApi> {
-    // [0, 1, 2, 3]
-    // 1 - 2 - 3
-
-    // 1 => 0
-    // 2 => 1
-
     const assessmentList = await prisma.assessment.findMany({
       skip: query?.page, // 1 page
       take: query?.take, // quantidade
@@ -65,19 +59,16 @@ export class AssessmentService {
       orderBy: { createdAt: "asc" },
     });
 
-    if (!assessmentList) {
-      return {
-        ok: false,
-        code: 404,
-        message: "Avaliação do estudante não encontrada",
-      };
-    }
+    const count = await prisma.assessment.count({ where: { studentId: id } });
 
     return {
       ok: true,
       code: 200,
       message: "Avaliações buscadas com sucesso !!!",
-      data: assessmentList.map((ass) => this.mapToDto(ass)),
+      data: {
+        assessments: assessmentList.map((ass) => this.mapToDto(ass)),
+        count,
+      },
     };
   }
 
