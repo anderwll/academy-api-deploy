@@ -174,6 +174,179 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": ["Avaliações"],
+        "summary": "Cria uma nova avaliação",
+        "description": "Endpoint que cria uma nova avaliação",
+        "security": [],
+        "requestBody": {
+          "description": "Objeto com os dados da avaliação",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Prova de Matemática"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Prova de matemática com 10 questões"
+                  },
+                  "grade": {
+                    "type": "number",
+                    "example": 10
+                  },
+                  "studentId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "3d0ca315-aff9-4fc2-be61-3b76b9a2d798"
+                  }
+                },
+                "required": ["title", "description", "grade", "studentId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Json com os dados da avaliação criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Assessment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assessments/:id": {
+      "put": {
+        "tags": ["Avaliações"],
+        "summary": "Atualiza uma avaliação",
+        "description": "Endpoint que atualiza uma avaliação",
+        "security": [],
+        "requestBody": {
+          "description": "Objeto com os dados da avaliação",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Prova de Matemática"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Prova de matemática com 10 questões"
+                  },
+                  "grade": {
+                    "type": "number",
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Json com os dados da avaliação atualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Assessment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Avaliações"],
+        "summary": "Deleta uma avaliação",
+        "description": "Endpoint que deleta uma avaliação",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Json com os dados da avaliação deletada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Assessment"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestResponse"
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
