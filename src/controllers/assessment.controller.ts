@@ -38,7 +38,7 @@ export class AssessmentController {
 
       const service = new AssessmentService();
       const result = await service.findAll(student.id, {
-        page: page ? Number(page) - 1 : undefined, // converter p/ number
+        page: page ? Number(page) : undefined, // converter p/ number
         take: take ? Number(take) : undefined,
       });
 
