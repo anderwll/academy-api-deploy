@@ -1,4 +1,4 @@
-import { Assessment } from "@prisma/client";
+import Prisma, { Assessment } from "@prisma/client";
 import { prisma } from "../database/prisma.database";
 import { CreateAssessmentDto } from "../dtos/assessment.dto";
 import { ResponseApi } from "../types";
@@ -52,9 +52,16 @@ export class AssessmentService {
     id: string,
     query?: { page?: number; take?: number }
   ): Promise<ResponseApi> {
+    const limit = query?.take || 10;
+    const page = query?.page || 1;
+
+    const pagination = {
+      take: limit,
+      skip: (page - 1) * limit, // 1 - 1 = 0 * 10 = 0 || 2 - 1 = 1 * 10 = 10
+    };
+
     const assessmentList = await prisma.assessment.findMany({
-      skip: query?.page, // 1 page
-      take: query?.take, // quantidade
+      ...pagination,
       where: { studentId: id },
       orderBy: { createdAt: "asc" },
     });
