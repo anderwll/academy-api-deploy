@@ -1,14 +1,12 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { CreateAssessmentDto } from "../dtos/assessment.dto";
 import { AssessmentService } from "../services/assessments.service";
-import { log } from "console";
 
 export class AssessmentController {
   public static async create(req: Request, res: Response): Promise<void> {
     try {
-      const { title, description, grade, studentId, student } = req.body; // Validado
-
-      console.log(student);
+      const student = req.authUser;
+      const { title, description, grade, studentId } = req.body;
 
       const data: CreateAssessmentDto = {
         title,
@@ -33,12 +31,12 @@ export class AssessmentController {
 
   public static async findAll(req: Request, res: Response): Promise<void> {
     try {
-      const { student } = req.body; // TOKEN => { student: { id, type } } QUERY => ?studentId=
-      const { page, take } = req.query; // string
+      const student = req.authUser;
+      const { page, take } = req.query;
 
       const service = new AssessmentService();
       const result = await service.findAll(student.id, {
-        page: page ? Number(page) : undefined, // converter p/ number
+        page: page ? Number(page) : undefined,
         take: take ? Number(take) : undefined,
       });
 

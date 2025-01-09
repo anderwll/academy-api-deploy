@@ -66,8 +66,6 @@ export class StudentService {
     };
   }
 
-  // ?id=
-  // /:id
   public async findAll({ name, cpf }: QueryFilterDto): Promise<ResponseApi> {
     const where: Prisma.StudentWhereInput = {};
 
@@ -79,13 +77,6 @@ export class StudentService {
       where.cpf = { contains: cpf };
     }
 
-    // OU => OR ||
-    // ILIKE LIKE
-
-    // contains = conter
-    // endsWith = terminar
-    // startWith = começar
-    // in = []
     const students = await prisma.student.findMany({
       where,
     });
@@ -94,12 +85,11 @@ export class StudentService {
       ok: true,
       code: 200,
       message: "Estudantes buscados com sucesso!",
-      data: students.map((student) => this.mapToDto(student)), // StudentDto[]
+      data: students.map((student) => this.mapToDto(student)),
     };
   }
 
   public async findOneById(id: string): Promise<ResponseApi> {
-    // 1 - Buscar => id é pk, id é unico
     const student = await prisma.student.findUnique({
       where: { id },
       include: {
@@ -107,16 +97,14 @@ export class StudentService {
       },
     });
 
-    // 2 - Validar se existe
     if (!student) {
       return {
         ok: false,
-        code: 404, // Not Found
+        code: 404,
         message: "Estudante não encontrado!",
       };
     }
 
-    // 3 - Retornar o dado
     return {
       ok: true,
       code: 200,
@@ -129,7 +117,6 @@ export class StudentService {
     id: string,
     updateStudent: UpdateStudentDto
   ): Promise<ResponseApi> {
-    // 1 - Verificar se o id informado existe
     const student = await prisma.student.findUnique({
       where: { id },
     });
@@ -142,18 +129,11 @@ export class StudentService {
       };
     }
 
-    /**
-     *  update - atualiza um determinado => retorna um
-     *  udapteMany - Atualiza váriso e não retorna nada
-     *  upsert - Atualiza quando existir e cria quando não existir
-     */
-    // 2 - Atualizar (prisma)
     const studentUpdated = await prisma.student.update({
       where: { id },
-      data: { ...updateStudent }, // Espalha as propriedades
+      data: { ...updateStudent },
     });
 
-    // 3 - Retornar o dado att.
     return {
       ok: true,
       code: 200,
@@ -163,7 +143,6 @@ export class StudentService {
   }
 
   public async remove(id: string): Promise<ResponseApi> {
-    // 1 - Validar se o id informado é válido
     const student = await prisma.student.findUnique({ where: { id } });
 
     if (!student) {
@@ -174,29 +153,10 @@ export class StudentService {
       };
     }
 
-    // DTL - TRANSAÇÃO
-    // const studentDeleted = await prisma.$transaction(async (transacao) => {
-    //   await transacao.assessment.deleteMany({
-    //     where: { studentId: id },
-    //   });
-
-    //   return await transacao.student.delete({
-    //     where: { id },
-    //   });
-    // });
-
-    // NÃO É NECESSÁRIO pois definimos uma exclusão em cascata
-    // await prisma.assessment.deleteMany({
-    //   where: { studentId: id },
-    // });
-
-    // 2 - Remover o dado
     const studentDeleted = await prisma.student.delete({
       where: { id },
     });
 
-    // include => JOIN
-    // 3 - Retornar o dado/feeback
     return {
       ok: true,
       code: 200,
@@ -218,7 +178,7 @@ export class StudentService {
       assessments: student.assessments?.map((assessment) => ({
         id: assessment.id,
         title: assessment.title,
-        grade: Number(assessment.grade), // Decima(4, 2) => number (Number())
+        grade: Number(assessment.grade),
         description: assessment?.description,
       })),
     };

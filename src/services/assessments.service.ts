@@ -1,6 +1,6 @@
 import Prisma, { Assessment } from "@prisma/client";
 import { prisma } from "../database/prisma.database";
-import { CreateAssessmentDto } from "../dtos/assessment.dto";
+import { CreateAssessmentDto, UpdateDTO } from "../dtos/assessment.dto";
 import { ResponseApi } from "../types";
 
 export class AssessmentService {
@@ -87,7 +87,7 @@ export class AssessmentService {
     if (!assessment) {
       return {
         ok: false,
-        code: 404, // Not Found
+        code: 404,
         message: "Avaliaçao não encontrado!",
       };
     }
@@ -163,9 +163,4 @@ export class AssessmentService {
       studentId: assessment.studentId,
     };
   }
-}
-interface UpdateDTO {
-  title?: string;
-  description?: string;
-  grade?: number;
 }
