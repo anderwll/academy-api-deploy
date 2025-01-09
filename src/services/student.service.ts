@@ -17,14 +17,12 @@ export class StudentService {
   public async create(createStudent: CreateStudentDto): Promise<ResponseApi> {
     const { name, email, password, type, age, cpf } = createStudent;
 
-    // 2 - Verificarmos as colunas unicas
     const student = await prisma.student.findFirst({
       where: {
-        OR: [{ email: email }, { cpf: cpf }], // = // EMAIL OU CPF
+        OR: [{ email: email }, { cpf: cpf }],
       },
     });
 
-    // Valida E-mail e CPF unicos
     if (student) {
       if (student.email === email) {
         return {
@@ -43,11 +41,9 @@ export class StudentService {
       }
     }
 
-    // 3 - Criação do nosso hash (password)
     const bcrypt = new Bcrypt();
     const passwordHash = await bcrypt.generateHash(password);
 
-    // 4 - Criação do nosso estudante no banco de dados
     const studentCreated = await prisma.student.create({
       data: {
         name: name,
@@ -55,6 +51,7 @@ export class StudentService {
         email: email,
         password: passwordHash,
         age: age,
+        type: type,
       },
     });
 

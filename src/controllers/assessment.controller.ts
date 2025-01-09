@@ -31,11 +31,11 @@ export class AssessmentController {
 
   public static async findAll(req: Request, res: Response): Promise<void> {
     try {
-      const student = req.authUser;
+      const { id, type } = req.authUser;
       const { page, take } = req.query;
 
       const service = new AssessmentService();
-      const result = await service.findAll(student.id, {
+      const result = await service.findAll(id, type, {
         page: page ? Number(page) : undefined,
         take: take ? Number(take) : undefined,
       });

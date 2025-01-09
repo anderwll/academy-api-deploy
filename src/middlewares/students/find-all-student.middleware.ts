@@ -1,11 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 
-/**
- * req.params;   /student/:id
- * req.query;  /student?name=ander
- *
- */
-
 export class FindAllStudentMidlleware {
   static validateTypes(req: Request, res: Response, next: NextFunction) {
     const { name, cpf } = req.query;

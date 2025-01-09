@@ -18,7 +18,7 @@ export class AuthService {
       return {
         ok: false,
         code: 404,
-        message: "E-mail ou senha incorretos. (email)",
+        message: "E-mail ou senha incorretos.",
       };
     }
 
@@ -30,7 +30,7 @@ export class AuthService {
       return {
         ok: false,
         code: 404,
-        message: "E-mail ou senha incorretos. (password)",
+        message: "E-mail ou senha incorretos.",
       };
     }
 

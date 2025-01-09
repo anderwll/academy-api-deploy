@@ -1,4 +1,4 @@
-import Prisma, { Assessment } from "@prisma/client";
+import Prisma, { Assessment, StudentType } from "@prisma/client";
 import { prisma } from "../database/prisma.database";
 import { CreateAssessmentDto, UpdateDTO } from "../dtos/assessment.dto";
 import { ResponseApi } from "../types";
@@ -10,7 +10,6 @@ export class AssessmentService {
     const { title, description, grade, studentId, studentLoggedId } =
       createAssessment;
 
-    // studentId = Existe no banco
     const student = await prisma.student.findUnique({
       where: { id: studentId },
     });
@@ -23,12 +22,14 @@ export class AssessmentService {
       };
     }
 
-    if (studentLoggedId !== studentId) {
-      return {
-        ok: false,
-        code: 404,
-        message: "Id informado inválido!",
-      };
+    if (student.type === StudentType.M) {
+      if (studentLoggedId !== studentId) {
+        return {
+          ok: false,
+          code: 404,
+          message: "Não é possível criar avaliações para outros alunos!",
+        };
+      }
     }
 
     const assessmentCreated = await prisma.assessment.create({
@@ -49,9 +50,11 @@ export class AssessmentService {
   }
 
   public async findAll(
-    id: string,
+    studentId: string,
+    type: StudentType,
     query?: { page?: number; take?: number }
   ): Promise<ResponseApi> {
+    let where: Prisma.Prisma.AssessmentWhereInput | undefined = undefined;
     const limit = query?.take || 10;
     const page = query?.page || 1;
 
@@ -60,13 +63,18 @@ export class AssessmentService {
       skip: (page - 1) * limit, // 1 - 1 = 0 * 10 = 0 || 2 - 1 = 1 * 10 = 10
     };
 
+    // VALIDATE TYPES, FROM LIST ASSESSMENTS
+    if (type !== StudentType.T) {
+      where = { studentId };
+    }
+
     const assessmentList = await prisma.assessment.findMany({
       ...pagination,
-      where: { studentId: id },
+      where,
       orderBy: { createdAt: "asc" },
     });
 
-    const count = await prisma.assessment.count({ where: { studentId: id } });
+    const count = await prisma.assessment.count({ where });
 
     return {
       ok: true,

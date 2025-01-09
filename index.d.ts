@@ -4,7 +4,7 @@ declare namespace Express {
       id: string;
       email: string;
       name: string;
-      type: string;
+      type: "T" | "M" | "F";
     };
   }
 }
