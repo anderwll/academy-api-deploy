@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../services";
+import { JWT } from "../../utils/jwt";
 
 export class AuthMiddleware {
   public static async validate(
@@ -7,9 +8,9 @@ export class AuthMiddleware {
     res: Response,
     next: NextFunction
   ) {
-    const token = req.headers.authorization; // token
+    const authorization = req.headers.authorization;
 
-    if (!token) {
+    if (!authorization) {
       res.status(401).json({
         ok: false,
         message: "Não autenticado!",
@@ -17,10 +18,12 @@ export class AuthMiddleware {
       return;
     }
 
-    const service = new AuthService();
-    const studentFound = await service.validateToken(token);
+    const [, token] = authorization.split(" ");
 
-    if (!studentFound) {
+    const jwt = new JWT();
+    const payload = jwt.verifyToken(token);
+
+    if (!payload) {
       res.status(401).json({
         ok: false,
         message: "Não autenticado!",
@@ -28,13 +31,7 @@ export class AuthMiddleware {
       return;
     }
 
-    // Repassa essa informação.
-    req.body.student = {
-      id: studentFound.id,
-      type: studentFound.type,
-    };
-
-    req.body.outro = "DEU BOM";
+    req.authUser = payload;
 
     next();
   }
